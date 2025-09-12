@@ -39,8 +39,8 @@ This portfolio demonstrates:
 ## 📬 Contact
 
 If you'd like to connect, feel free to reach out:  
-- **LinkedIn**: [Your LinkedIn Profile](https://linkedin.com/in/your-profile)  
-- **Email**: your.email@example.com  
-- **GitHub**: [Your GitHub Profile](https://github.com/your-username)
+- **LinkedIn**: [Cristian Asprilla](https://www.linkedin.com/in/cristian-asprilla/)  
+- **Email**: cristian.asprilla@outlook.com  
+- **GitHub**: [CristianAsprilla](https://github.com/CristianAsprilla)
 
 ---
