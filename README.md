@@ -5,7 +5,29 @@ Each project is designed to extract insights and generate **business value from 
 
 ---
 
-## 📂 Projects
+## � Project Creation Script
+
+To quickly scaffold a new data science project with a recommended folder structure and starter files, use the `create_project.py` script included in this repository.
+
+**Usage:**
+
+```bash
+python create_project.py <project_name>
+```
+
+This will create a new folder named `<project_name>` with subfolders for data, notebooks, source code, and reports, as well as a template `README.md` and `requirements.txt` inside the new project folder.
+
+**Example:**
+
+```bash
+python create_project.py customer-segmentation
+```
+
+This helps maintain consistency and saves time when starting new projects.
+
+---
+
+## �📂 Projects
 
 | Project | Description | Tech Stack |
 |---------|-------------|------------|
