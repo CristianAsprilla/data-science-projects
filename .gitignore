@@ -1,3 +1,19 @@
+# JetBrains IDEs (PyCharm, IntelliJ, etc.)
+.idea/
+*.iml
+.idea_modules/
+.idea/**
+out/
+/.idea/
+/.idea/**
+*.ipr
+*.iws
+*.iml
+__pycache__/
+
+# VS Code
+.vscode/
+*.code-workspace
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
