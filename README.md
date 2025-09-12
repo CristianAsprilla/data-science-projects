@@ -5,7 +5,7 @@ Each project is designed to extract insights and generate **business value from 
 
 ---
 
-## � Project Creation Script
+## 🚀 Project Creation Script
 
 To quickly scaffold a new data science project with a recommended folder structure and starter files, use the `create_project.py` script included in this repository.
 
@@ -27,7 +27,7 @@ This helps maintain consistency and saves time when starting new projects.
 
 ---
 
-## �📂 Projects
+## 📂 Projects
 
 | Project | Description | Tech Stack |
 |---------|-------------|------------|
