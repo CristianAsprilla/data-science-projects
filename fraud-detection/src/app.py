@@ -1,24 +1,41 @@
 import streamlit as st
+
+"""
+Streamlit App: Fraud Detection Demo
+-----------------------------------
+This simple web app lets you play with a trained fraud detection model. Enter a few transaction details and see if the model thinks it's legit or suspicious.
+
+Author: Cristian Asprilla
+"""
+
+import streamlit as st
 import pickle
 import pandas as pd
 
-# Load your trained model
+# --- Load the trained model ---
+# Make sure the model path is correct!
 model = pickle.load(open('../models/fraud_model.pkl', 'rb'))
 
 st.title("Fraud Detection Demo")
+st.write("""
+Curious if a transaction might be flagged as fraud? Tweak the values below and see what the model predicts.
+This is a first version, so don't use it for real banking decisions!
+""")
 
-# Input fields
-transaction_amount = st.number_input("Transaction Amount")
+# --- User Inputs ---
+transaction_amount = st.number_input("Transaction Amount", min_value=0.0, value=100.0)
 device = st.selectbox("Device Used", ["Mobile", "Desktop", "Tablet"])
-account_age = st.number_input("Account Age (days)")
+account_age = st.number_input("Account Age (days)", min_value=0, value=60)
 
-# Preprocess input, default for testing
-# This part should be modified based on the requirement of the business
 def preprocess_input(amount, device, age):
+    """
+    Prepare a single transaction for prediction.
+    (In a real app, you'd want to match this to your model's training pipeline.)
+    """
     input_data = {
-        'User_ID': 0,
+        'User_ID': 0,  # Placeholder
         'Transaction_Amount': amount,
-        'Time_of_Transaction': 12,
+        'Time_of_Transaction': 12,  # Noon as a default
         'Previous_Fraudulent_Transactions': 0,
         'Account_Age': age,
         'Number_of_Transactions_Last_24H': 1,
@@ -31,6 +48,7 @@ def preprocess_input(amount, device, age):
         'Avg_Transaction_Amount_Past_24H': amount,
         'User_Avg_Amount': amount,
         'Amount_Ratio_To_Avg': 1.0,
+        # For demo: assume online purchase, credit card, LA
         'Transaction_Type_ATM Withdrawal': 0,
         'Transaction_Type_Bank Transfer': 0,
         'Transaction_Type_Bill Payment': 0,
@@ -54,13 +72,14 @@ def preprocess_input(amount, device, age):
         'Payment_Method_Net Banking': 0,
         'Payment_Method_UPI': 0
     }
+    return pd.DataFrame([input_data])
 
-    input_data = pd.DataFrame([input_data])
-    return input_data
 
-predict_button = st.button("Predict Fraud")
-
-if predict_button:
+# --- Prediction ---
+if st.button("Predict Fraud"):
     input_data = preprocess_input(transaction_amount, device, account_age)
     prediction = model.predict(input_data)
-    st.write("Fraudulent" if prediction[0] == 1 else "Legitimate")
+    if prediction[0] == 1:
+        st.error("⚠️ This transaction looks suspicious! (Fraudulent)")
+    else:
+        st.success("✅ This transaction looks legitimate.")
