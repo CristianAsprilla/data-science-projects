@@ -19,15 +19,8 @@ RUN pip install --upgrade pip \
 # 5. Copy the entire project into the image (excluding artifacts)
 COPY . .
 
-# 6. Generate model artifacts by running the training pipeline
-# Set environment variable to disable MLflow in CI/CD
-# Force re-run by using a unique command each time
-RUN echo "Starting model training..." && \
-    CI=true python pipelines/run_pipelines.py \
-    --input data/WA_Fn-UseC_-Telco-Customer-Churn.csv \
-    --target Churn \
-    --experiment "Docker Build" && \
-    echo "Model training completed"
+# 6. Copy pre-trained artifacts into the image
+COPY artifacts/ /app/artifacts/
 
 # 7. Verify artifacts were created
 RUN ls -la artifacts/ && echo "Artifacts created successfully"
