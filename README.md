@@ -32,7 +32,7 @@ This helps maintain consistency and saves time when starting new projects.
 | Project | Description | Tech Stack |
 |---------|-------------|------------|
 | [Fraud Detection](fraud-detection/) | Detect fraudulent transactions using machine learning models. | Python, Pandas, Scikit-learn |
-| [Customer Churn Prediction](churn-prediction/) | Predict which customers are likely to leave a service. | Python, Scikit-learn, Power BI |
+| [Customer Churn Prediction](customer-churn/) | Predict which customers are likely to leave a service. | Python, XGBoost, FastAPI, Gradio |
 | [Sentiment Analysis](sentiment-analysis/) | Analyze text data to classify customer sentiment. | Python, NLP, Transformers |
 
 *(This table will grow as I add more projects.)*
