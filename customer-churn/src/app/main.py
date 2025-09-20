@@ -74,6 +74,16 @@ button.clear {
     background-color: #4caf50;
     color: white;
 }
+
+.table-section {
+    margin-bottom: 20px;
+}
+
+.table-section h2 {
+    color: #4caf50;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
 """
 
 
@@ -201,16 +211,13 @@ def gradio_interface(
 demo = gr.Interface(
     fn=gradio_interface,
     inputs=[
-        # Demographics section
         gr.Dropdown(["Male", "Female"], label="Gender", value="Male"),
         gr.Dropdown(["Yes", "No"], label="Partner", value="No"),
         gr.Dropdown(["Yes", "No"], label="Dependents", value="No"),
 
-        # Phone services section
         gr.Dropdown(["Yes", "No"], label="Phone Service", value="Yes"),
         gr.Dropdown(["Yes", "No", "No phone service"], label="Multiple Lines", value="No"),
 
-        # Internet services section (key churn predictors)
         gr.Dropdown(["DSL", "Fiber optic", "No"], label="Internet Service", value="Fiber optic"),
         gr.Dropdown(["Yes", "No", "No internet service"], label="Online Security", value="No"),
         gr.Dropdown(["Yes", "No", "No internet service"], label="Online Backup", value="No"),
@@ -219,7 +226,6 @@ demo = gr.Interface(
         gr.Dropdown(["Yes", "No", "No internet service"], label="Streaming TV", value="Yes"),
         gr.Dropdown(["Yes", "No", "No internet service"], label="Streaming Movies", value="Yes"),
 
-        # Contract and billing section (major churn factors)
         gr.Dropdown(["Month-to-month", "One year", "Two year"], label="Contract", value="Month-to-month"),
         gr.Dropdown(["Yes", "No"], label="Paperless Billing", value="Yes"),
         gr.Dropdown([
@@ -227,7 +233,6 @@ demo = gr.Interface(
             "Bank transfer (automatic)", "Credit card (automatic)"
         ], label="Payment Method", value="Electronic check"),
 
-        # Numeric features (important for churn prediction)
         gr.Number(label="Tenure (months)", value=1, minimum=0, maximum=100),
         gr.Number(label="Monthly Charges ($)", value=85.0, minimum=0, maximum=200),
         gr.Number(label="Total Charges ($)", value=85.0, minimum=0, maximum=10000),
@@ -235,13 +240,11 @@ demo = gr.Interface(
     outputs=gr.Textbox(label="Churn Prediction", lines=2),
     title="Customer Churn Predictor",
     description="""
-    **Predict customer churn probability using machine learning**
-
-    Fill in the customer details below to get a churn prediction. The model uses XGBoost trained on 
-    historical telecom customer data to identify customers at risk of churning.
-
-    💡 **Tip**: Month-to-month contracts with fiber optic internet and electronic check payments 
-    tend to have higher churn rates.
+    <div style='text-align: center; background-color: #263238; color: white; padding: 20px;'>
+        <h1 style='color: #ff9800;'>Predict Customer Churn Probability</h1>
+        <p style='font-size: 1.2em;'>Fill in the customer details below to get a churn prediction. The model uses XGBoost trained on historical telecom customer data to identify customers at risk of churning.</p>
+        <p style='font-size: 1em;'>💡 <b>Tip:</b> Month-to-month contracts with fiber optic internet and electronic check payments tend to have higher churn rates.</p>
+    </div>
     """,
     examples=[
         # High churn risk example
@@ -253,7 +256,7 @@ demo = gr.Interface(
          "Yes", "No", "No", "Two year", "No", "Credit card (automatic)",
          60, 45.0, 2700.0]
     ],
-    theme=gr.themes.Soft()  # Professional appearance
+    theme=gr.themes.Default()
 )
 
 # === MOUNT GRADIO UI INTO FASTAPI ===
