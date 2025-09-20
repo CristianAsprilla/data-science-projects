@@ -130,3 +130,6 @@ zipp
 pyspark
 google-cloud-storage
 google-cloud-secret-manager
+azure-storage-blob
+azure-identity
+azure-keyvault-secrets
