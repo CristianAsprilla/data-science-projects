@@ -38,7 +38,7 @@ gradio
 graphene 
 graphql-core 
 graphql-relay 
-great_expectations 
+great_expectations==0.16.14 
 gunicorn 
 h11 
 idna 
@@ -126,4 +126,4 @@ uvicorn
 wcwidth 
 Werkzeug 
 xgboost 
-zipp 
+zipp
