@@ -203,7 +203,12 @@ def gradio_interface(
 
     # Call same inference pipeline as API endpoint
     result = predict(data)
-    return str(result)  # Return as string for Gradio display
+
+    # Check if the result indicates high churn risk
+    if "Likely to churn" in result:
+        return gr.Textbox.update(value=result, label="⚠️ High Risk: Immediate action needed!", lines=2)
+    else:
+        return gr.Textbox.update(value=result, label="Churn Prediction", lines=2)
 
 
 # === GRADIO UI CONFIGURATION ===
@@ -242,8 +247,8 @@ demo = gr.Interface(
     description="""
     <div style='text-align: center; background-color: #263238; color: white; padding: 20px;'>
         <h1 style='color: #ff9800;'>Predict Customer Churn Probability</h1>
-        <p style='font-size: 1.2em;'>Fill in the customer details below to get a churn prediction. The model uses XGBoost trained on historical telecom customer data to identify customers at risk of churning.</p>
-        <p style='font-size: 1em;'>💡 <b>Tip:</b> Month-to-month contracts with fiber optic internet and electronic check payments tend to have higher churn rates.</p>
+        <p style='font-size: 1.2em;'>Enter the customer's details below to find out if they are at risk of leaving. Our model analyzes their history and predicts the likelihood of churn.</p>
+        <p style='font-size: 1em;'>💡 <b>Tip:</b> Customers with month-to-month contracts, fiber optic internet, and electronic check payments are more likely to leave. Consider offering them incentives to stay.</p>
     </div>
     """,
     examples=[
