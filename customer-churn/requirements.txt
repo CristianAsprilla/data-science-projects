@@ -128,3 +128,5 @@ Werkzeug
 xgboost 
 zipp
 pyspark
+google-cloud-storage
+google-cloud-secret-manager
