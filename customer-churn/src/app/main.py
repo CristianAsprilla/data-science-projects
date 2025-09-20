@@ -5,10 +5,76 @@ from src.serving.inference import predict  # Core ML inference logic
 
 # Initialize FastAPI application
 app = FastAPI(
-    title="Telco Customer Churn Prediction API",
-    description="ML API for predicting customer churn in telecom industry",
+    title="Customer Churn Predictor",
+    description="Predict customer churn probability using machine learning. Fill in the customer details below to get a churn prediction. The model uses XGBoost trained on historical telecom customer data to identify customers at risk of churning.",
     version="1.0.0"
 )
+
+
+# Updated title
+app.title = "Customer Churn Predictor"
+
+# Enhanced UI layout
+app.description = "Predict customer churn probability using machine learning. Fill in the customer details below to get a churn prediction. The model uses XGBoost trained on historical telecom customer data to identify customers at risk of churning."
+
+# Added styling for better visual hierarchy and accessibility
+app.css = """
+body {
+    background: linear-gradient(to bottom, #1a1a1a, #333);
+    color: #f5f5f5;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    font-size: 2.5em;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #4caf50;
+}
+
+button {
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 1em;
+}
+
+button.submit {
+    background-color: #4caf50;
+    color: white;
+}
+
+button.clear {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.table th, .table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.table tr:hover {
+    background-color: #ddd;
+}
+
+.table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4caf50;
+    color: white;
+}
+"""
 
 
 # === HEALTH CHECK ENDPOINT ===
@@ -167,7 +233,7 @@ demo = gr.Interface(
         gr.Number(label="Total Charges ($)", value=85.0, minimum=0, maximum=10000),
     ],
     outputs=gr.Textbox(label="Churn Prediction", lines=2),
-    title="🔮 Telco Customer Churn Predictor",
+    title="Customer Churn Predictor",
     description="""
     **Predict customer churn probability using machine learning**
 
