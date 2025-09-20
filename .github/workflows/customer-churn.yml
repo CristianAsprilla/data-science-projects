@@ -1,4 +1,11 @@
-name: Customer Churn - Build and Push to Docker Hub
+name: Customer Churn - Build       - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./customer-churn  # Build context is the customer-churn folder
+          file: ./customer-churn/Dockerfile  # Path to the Dockerfile in customer-churn
+          push: true
+          no-cache: true  # Force rebuild without using cache
+          tags: cyac/customer-churn-fastapi:latesth to Docker Hub
 
 on:
   push:

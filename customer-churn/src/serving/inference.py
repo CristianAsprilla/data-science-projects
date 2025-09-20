@@ -13,8 +13,8 @@ import joblib
 # === MODEL LOADING CONFIGURATION ===
 # IMPORTANT: This path is set during Docker container build
 # In development: uses local artifacts
-# In production: uses model copied to container at build time
-MODEL_DIR = "/app/model"
+# In production: uses artifacts generated during Docker build
+MODEL_DIR = "/app/artifacts"
 
 try:
     # Load the trained XGBoost model using joblib
