@@ -38,18 +38,28 @@ def main(args):
     """
 
     # === MLflow Setup - ESSENTIAL for experiment tracking ===
-    # Configure MLflow to use local file-based tracking (not a tracking server)
-    mlruns_path = args.mlflow_uri or f"file://{PROJECT_ROOT}/mlruns"  # Local file-based tracking
-    mlflow.set_tracking_uri(mlruns_path)
-    mlflow.set_experiment(args.experiment)  # Creates experiment if doesn't exist
+    # Skip MLflow in CI/CD environments to avoid issues
+    use_mlflow = not os.getenv("CI", False)
 
-    # Start MLflow run - all subsequent logging will be tracked under this run
-    with mlflow.start_run():
+    if use_mlflow:
+        # Configure MLflow to use local file-based tracking (not a tracking server)
+        mlruns_path = args.mlflow_uri or f"file://{PROJECT_ROOT}/mlruns"  # Local file-based tracking
+        mlflow.set_tracking_uri(mlruns_path)
+        mlflow.set_experiment(args.experiment)  # Creates experiment if doesn't exist
+
+        # Start MLflow run - all subsequent logging will be tracked under this run
+        mlflow_context = mlflow.start_run()
+    else:
+        print("🔄 Running in CI/CD mode - skipping MLflow logging")
+        mlflow_context = None
+
+    try:
         # === Log hyperparameters and configuration ===
         # REQUIRED: These parameters are essential for model reproducibility
-        mlflow.log_param("model", "xgboost")  # Model type for comparison
-        mlflow.log_param("threshold", args.threshold)  # Classification threshold (default: 0.35)
-        mlflow.log_param("test_size", args.test_size)  # Train/test split ratio
+        if use_mlflow:
+            mlflow.log_param("model", "xgboost")  # Model type for comparison
+            mlflow.log_param("threshold", args.threshold)  # Classification threshold (default: 0.35)
+            mlflow.log_param("test_size", args.test_size)  # Train/test split ratio
 
         # === STAGE 1: Data Loading & Validation ===
         print("🔄 Loading data...")
@@ -70,12 +80,14 @@ def main(args):
         # This step is ESSENTIAL for production ML - validates data quality before training
         print("🔍 Validating data quality with Great Expectations...")
         is_valid, failed = validate_telco_data(df)
-        mlflow.log_metric("data_quality_pass", int(is_valid))  # Track data quality over time
+        if use_mlflow:
+            mlflow.log_metric("data_quality_pass", int(is_valid))  # Track data quality over time
 
         if not is_valid:
             # Log validation failures for debugging
             import json
-            mlflow.log_text(json.dumps(failed, indent=2), artifact_file="failed_expectations.json")
+            if use_mlflow:
+                mlflow.log_text(json.dumps(failed, indent=2), artifact_file="failed_expectations.json")
             raise ValueError(f"❌ Data quality check failed. Issues: {failed}")
         else:
             print("✅ Data validation passed. Logged to MLflow.")
@@ -108,7 +120,8 @@ def main(args):
             f.write("\n".join(feature_cols))
 
         # Log to MLflow for production serving
-        mlflow.log_text("\n".join(feature_cols), artifact_file="feature_columns.txt")
+        if use_mlflow:
+            mlflow.log_text("\n".join(feature_cols), artifact_file="feature_columns.txt")
 
         # ESSENTIAL: Save preprocessing artifacts for serving pipeline
         # These artifacts ensure training and serving use identical transformations
@@ -117,7 +130,8 @@ def main(args):
             "target": target  # Target column name
         }
         joblib.dump(preprocessing_artifact, os.path.join(artifacts_dir, "preprocessing.pkl"))
-        mlflow.log_artifact(os.path.join(artifacts_dir, "preprocessing.pkl"))
+        if use_mlflow:
+            mlflow.log_artifact(os.path.join(artifacts_dir, "preprocessing.pkl"))
         print(f"✅ Saved {len(feature_cols)} feature columns for serving consistency")
         print("📊 Splitting data...")
         X = df_enc.drop(columns=[target])  # Feature matrix
@@ -166,7 +180,8 @@ def main(args):
         t0 = time.time()
         model.fit(X_train, y_train)
         train_time = time.time() - t0
-        mlflow.log_metric("train_time", train_time)  # Track training performance
+        if use_mlflow:
+            mlflow.log_metric("train_time", train_time)  # Track training performance
         print(f"✅ Model trained in {train_time:.2f} seconds")
 
         # === STAGE 6: Model Evaluation ===
@@ -180,7 +195,8 @@ def main(args):
         # Lower threshold = more sensitive to churn (higher recall, lower precision)
         y_pred = (proba >= args.threshold).astype(int)
         pred_time = time.time() - t1
-        mlflow.log_metric("pred_time", pred_time)  # Track inference performance
+        if use_mlflow:
+            mlflow.log_metric("pred_time", pred_time)  # Track inference performance
 
         # === CRITICAL: Log Evaluation Metrics to MLflow ===
         # These metrics are essential for model comparison and monitoring
@@ -190,10 +206,11 @@ def main(args):
         roc_auc = roc_auc_score(y_test, proba)  # Area under ROC curve (threshold-independent)
 
         # Log all metrics for experiment tracking
-        mlflow.log_metric("precision", precision)
-        mlflow.log_metric("recall", recall)
-        mlflow.log_metric("f1", f1)
-        mlflow.log_metric("roc_auc", roc_auc)
+        if use_mlflow:
+            mlflow.log_metric("precision", precision)
+            mlflow.log_metric("recall", recall)
+            mlflow.log_metric("f1", f1)
+            mlflow.log_metric("roc_auc", roc_auc)
 
         print(f"🎯 Model Performance:")
         print(f"   Precision: {precision:.3f} | Recall: {recall:.3f}")
@@ -202,11 +219,14 @@ def main(args):
         # === STAGE 7: Model Serialization and Logging ===
         print("💾 Saving model to MLflow...")
         # ESSENTIAL: Log model in MLflow's standard format for serving
-        mlflow.sklearn.log_model(
-            model,
-            artifact_path="model"  # This creates a 'model/' folder in MLflow run artifacts
-        )
-        print("✅ Model saved to MLflow for serving pipeline")
+        if use_mlflow:
+            mlflow.sklearn.log_model(
+                model,
+                artifact_path="model"  # This creates a 'model/' folder in MLflow run artifacts
+            )
+            print("✅ Model saved to MLflow for serving pipeline")
+        else:
+            print("✅ Skipping MLflow model logging in CI/CD mode")
 
         # Save model locally for serving
         joblib.dump(model, os.path.join(artifacts_dir, "model.pkl"))
@@ -220,6 +240,11 @@ def main(args):
 
         print(f"\n📈 Detailed Classification Report:")
         print(classification_report(y_test, y_pred, digits=3))
+
+    finally:
+        # Clean up MLflow context if it was started
+        if use_mlflow and mlflow_context:
+            mlflow.end_run()
 
 
 if __name__ == "__main__":

@@ -19,7 +19,17 @@ RUN pip install --upgrade pip \
 # 5. Copy the entire project into the image
 COPY . .
 
-# Copy model artifacts to /app/model for inference
+# 6. Generate model artifacts by running the training pipeline
+# Set environment variable to disable MLflow in CI/CD
+RUN CI=true python pipelines/run_pipelines.py \
+    --input data/WA_Fn-UseC_-Telco-Customer-Churn.csv \
+    --target Churn \
+    --experiment "Docker Build"
+
+# 7. Verify artifacts were created
+RUN ls -la artifacts/
+
+# 8. Copy model artifacts to /app/model for inference (after generation)
 COPY artifacts/model.pkl /app/model/model.pkl
 COPY artifacts/feature_columns.txt /app/model/feature_columns.txt
 COPY artifacts/preprocessing.pkl /app/model/preprocessing.pkl
@@ -30,8 +40,8 @@ COPY artifacts/preprocessing.pkl /app/model/preprocessing.pkl
 ENV PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app/src
 
-# 6. Expose FastAPI port
+# 9. Expose FastAPI port
 EXPOSE 8000
 
-# 7. Run the FastAPI app using uvicorn (change path if needed)
+# 10. Run the FastAPI app using uvicorn (change path if needed)
 CMD ["python", "-m", "uvicorn", "src.app.main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -4,11 +4,11 @@ on:
   push:
     branches: [main]
     paths:
-      - 'customer-churn/**'  # Only trigger when customer-churn folder changes
+      - "customer-churn/**" # Only trigger when customer-churn folder changes
   pull_request:
     branches: [main]
     paths:
-      - 'customer-churn/**'  # Also trigger on PRs affecting customer-churn
+      - "customer-churn/**" # Also trigger on PRs affecting customer-churn
 
 jobs:
   build-and-push:
@@ -30,7 +30,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./customer-churn  # Build context is the customer-churn folder
-          file: ./customer-churn/Dockerfile  # Path to the Dockerfile in customer-churn
+          context: ./customer-churn # Build context is the customer-churn folder
+          file: ./customer-churn/Dockerfile # Path to the Dockerfile in customer-churn
           push: true
           tags: cyac/customer-churn-fastapi:latest
