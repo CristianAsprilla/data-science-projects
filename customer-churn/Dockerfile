@@ -19,20 +19,14 @@ RUN pip install --upgrade pip \
 # 5. Copy the entire project into the image (excluding artifacts)
 COPY . .
 
-# 6. Copy pre-trained artifacts into the image
-COPY artifacts/ /app/artifacts/
-
-# 7. Verify artifacts were created
-RUN ls -la artifacts/ && echo "Artifacts created successfully"
-
 # make "serving" and "app" importable without the "src." prefix
 # ensures logs are shown in real-time (no buffering).
 # lets you import modules using from app... instead of from src.app....
 ENV PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app/src
 
-# 8. Expose FastAPI port
+# 6. Expose FastAPI port
 EXPOSE 8000
 
-# 9. Run the FastAPI app using uvicorn (change path if needed)
+# 7. Run the FastAPI app using uvicorn (change path if needed)
 CMD ["python", "-m", "uvicorn", "src.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
