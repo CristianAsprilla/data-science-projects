@@ -84,8 +84,41 @@ This project predicts customer churn for a telecommunications company using mach
    - API: http://localhost:8000
    - UI: http://localhost:8000/ui
 
+### CI/CD with GitHub Actions
+This project uses GitHub Actions for automated building and pushing of Docker images to Docker Hub.
+
+1. **Trigger the Workflow**:
+   - Make changes to files in the `customer-churn/` directory.
+   - Commit and push to the `main` branch.
+   - The workflow will automatically build and push the image to Docker Hub.
+
+2. **Required Secrets** (set in GitHub repository settings):
+   - `DOCKERHUB_USERNAME`: Your Docker Hub username.
+   - `DOCKERHUB_TOKEN`: Your Docker Hub access token.
+
+### Azure Deployment
+The application is deployed to Azure App Service using the Docker image from Docker Hub.
+
+1. **Access the Deployed App**:
+   - URL: <https://customer-churn-app.azurewebsites.net>
+   - API Endpoint: <https://customer-churn-app.azurewebsites.net/predict>
+   - Gradio UI: <https://customer-churn-app.azurewebsites.net/ui>
+
+2. **Update the Deployment**:
+   - After pushing a new image via GitHub Actions, restart the Azure Web App:
+
+     ```bash
+     az webapp restart --name customer-churn-app --resource-group data-science-projects
+     ```
+
+3. **Azure Resources**:
+   - Resource Group: `data-science-projects`
+   - App Service Plan: `customer-churn-plan`
+   - Web App: `customer-churn-app`
+
 ### API Usage
 Send a POST request to `/predict` with customer data:
+
 ```json
 {
   "gender": "Female",
@@ -109,10 +142,12 @@ Send a POST request to `/predict` with customer data:
   "TotalCharges": 29.85
 }
 ```
+
 Response: `{"prediction": "Likely to churn"}`
 
 ## 🏗️ Project Structure
-```
+
+```text
 customer-churn/
 ├── data/                    # Raw and processed datasets
 ├── pipelines/               # Training pipeline scripts
@@ -129,17 +164,21 @@ customer-churn/
 ```
 
 ## 🚀 Next Steps
+
 - **Improvements**: Hyperparameter tuning with Optuna, feature selection, ensemble models
 - **Extensions**: Real-time prediction API, A/B testing for retention strategies, integration with CRM systems
 - **Deployment**: Kubernetes, cloud services (AWS SageMaker, GCP AI Platform)
 
 ## 📄 License
+
 This project is licensed under the MIT License.
 
 ## 🤝 Contributing
+
 Contributions are welcome! Please open an issue or submit a pull request.
 
 ## 📞 Contact
+
 - **Author**: Cristian Asprilla
 - **GitHub**: [CristianAsprilla](https://github.com/CristianAsprilla)
 - **Repository**: [data-science-projects](https://github.com/CristianAsprilla/data-science-projects)
