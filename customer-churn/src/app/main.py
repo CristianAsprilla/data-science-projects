@@ -259,7 +259,19 @@ demo = gr.Interface(
         # Low churn risk example
         ["Male", "Yes", "Yes", "Yes", "Yes", "DSL", "Yes", "Yes", "Yes",
          "Yes", "No", "No", "Two year", "No", "Credit card (automatic)",
-         60, 45.0, 2700.0]
+         60, 45.0, 2700.0],
+        # Random example 1
+        ["Female", "Yes", "No", "No", "No", "DSL", "Yes", "No", "Yes",
+         "No", "No", "Yes", "One year", "Yes", "Bank transfer (automatic)",
+         24, 65.0, 1560.0],
+        # Random example 2
+        ["Male", "No", "Yes", "Yes", "Yes", "No", "No", "No", "No",
+         "No", "Yes", "No", "Month-to-month", "No", "Mailed check",
+         3, 75.0, 225.0],
+        # Random example 3
+        ["Female", "No", "No", "Yes", "No", "Fiber optic", "No", "Yes", "No",
+         "Yes", "Yes", "Yes", "Two year", "Yes", "Credit card (automatic)",
+         48, 90.0, 4320.0]
     ],
     theme=gr.themes.Default()
 )

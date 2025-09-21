@@ -21,17 +21,28 @@ jobs:
       - name: Set up Docker Buildx # modern Docker builder that supports multi-platform builds
         uses: docker/setup-buildx-action@v3
 
+      # Push to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push to Docker Hub
         uses: docker/build-push-action@v5
         with:
-          context: ./customer-churn # Build context is the customer-churn folder
-          file: ./customer-churn/Dockerfile # Path to the Dockerfile in customer-churn
+          context: ./customer-churn
+          file: ./customer-churn/Dockerfile
           push: true
-          no-cache: true # Force rebuild without using cache
+          # no-cache: true # Force rebuild without using cache
           tags: cyac/customer-churn-fastapi:latest
+
+      # Push to Azure Container Registry
+      - name: Log in to Azure
+        run: |
+          az login --identity
+
+      - name: Tag and push to ACR
+        run: |
+          docker tag cyac/customer-churn-fastapi:latest customerchurnregistry.azurecr.io/customer-churn-fastapi:latest
+          docker push customerchurnregistry.azurecr.io/customer-churn-fastapi:latest
